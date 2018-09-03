@@ -1,6 +1,7 @@
 package com.app.ad.manager.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.dom4j.Branch;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,6 +19,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public class App  implements Serializable  {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,12 +30,8 @@ public class App  implements Serializable  {
     @NotBlank
     private String content;
 
-    @OneToMany(
-        mappedBy = "app",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<Ad> ads = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "app")
+    private List<Ad> ads;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -67,16 +65,6 @@ public class App  implements Serializable  {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public void setAds(List<Ad> ads) {
-        this.ads = ads;
-    }
-
-    @ManyToOne
-    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL)
-    public List<Ad> getAds() {
-        return ads;
     }
 
     public Date getCreatedAt() {

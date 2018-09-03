@@ -81,39 +81,21 @@ public class AppController {
 
     @RequestMapping(value = "/apps/{appId}/ads", method = RequestMethod.GET)
     public List<Ad> getAdListByAppId(@PathVariable(value = "appId") Long appId) {
-        App app = appRepository.findById(appId)
-                .orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
-
-        return app.getAds();
+       return adReposityory.findAdsByAppId(appId).orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
     }
 
     // Create a new ad
     @RequestMapping(value = "/apps/{appId}/ads", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"})
     public Ad createAd(@PathVariable(value = "appId") Long appId, Ad ad) {
-
-        App app = appRepository.findById(appId)
-                .orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
-
+        App app = appRepository.findById(appId).orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
         ad.setApp(app);
-
         return adReposityory.save(ad);
-
     }
 
     // Get a Single ad
     @GetMapping("/apps/{appId}/ads/{adId}")
     public Ad getAppById(@PathVariable(value = "appId") Long appId, @PathVariable(value = "adId") Long adId) {
-
-        App app = appRepository.findById(appId)
-                .orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
-
-        for (Ad ad : app.getAds()) {
-            if (ad.getId().equals(adId)) {
-                return ad;
-            }
-        }
-
-        throw new ResourceNotFoundException("Ad", "id", adId);
+        return adReposityory.findAdByAppIdAndId(appId, adId).orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
     }
 
     //endregion
