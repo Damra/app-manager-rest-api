@@ -81,7 +81,7 @@ public class AppController {
 
     @RequestMapping(value = "/apps/{appId}/ads", method = RequestMethod.GET)
     public List<Ad> getAdListByAppId(@PathVariable(value = "appId") Long appId) {
-       return adReposityory.findAdsByAppId(appId).orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
+       return adReposityory.findAdsByAppId(appId).orElseThrow(() -> new ResourceNotFoundException("Ad", "app_id", appId));
     }
 
     // Create a new ad
@@ -94,7 +94,7 @@ public class AppController {
 
     // Get a Single ad
     @GetMapping("/apps/{appId}/ads/{adId}")
-    public Ad getAppById(@PathVariable(value = "appId") Long appId, @PathVariable(value = "adId") Long adId) {
+    public Ad getadById(@PathVariable(value = "appId") Long appId, @PathVariable(value = "adId") Long adId) {
         return adReposityory.findAdByAppIdAndId(appId, adId).orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
     }
 

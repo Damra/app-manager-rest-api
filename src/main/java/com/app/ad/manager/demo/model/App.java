@@ -9,10 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 
 @Entity
 @Table(name = "apps")
@@ -29,9 +26,6 @@ public class App  implements Serializable  {
 
     @NotBlank
     private String content;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "app")
-    private List<Ad> ads;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
