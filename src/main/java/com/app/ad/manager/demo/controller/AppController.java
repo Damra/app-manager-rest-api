@@ -6,10 +6,13 @@ import com.app.ad.manager.demo.repository.AdReposityory;
 import com.app.ad.manager.demo.repository.AppRepository;
 import com.app.ad.manager.demo.util.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.ws.rs.QueryParam;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -81,7 +84,17 @@ public class AppController {
 
     @RequestMapping(value = "/apps/{appId}/ads", method = RequestMethod.GET)
     public List<Ad> getAdListByAppId(@PathVariable(value = "appId") Long appId) {
-       return adReposityory.findAdsByAppId(appId).orElseThrow(() -> new ResourceNotFoundException("Ad", "app_id", appId));
+        return adReposityory.findAdsByAppId(appId).orElseThrow(() -> new ResourceNotFoundException("Ad", "app_id", appId));
+    }
+
+    // Get all ad by app package name
+    @RequestMapping(value = "/apps/ads", method = RequestMethod.GET)
+    public List<Ad> getAdListByAppId(@QueryParam(value = "packageName") String packageName) {
+        List<App> apps = appRepository.findByAppId(packageName).orElseThrow(() -> new ResourceNotFoundException("App", "app_id", packageName));
+        if (apps.size() > 0) {
+            return adReposityory.findAdsByAppId(apps.get(0).getId()).orElseThrow(() -> new ResourceNotFoundException("Ad", "app_id", apps.get(0)));
+        }
+        return new ArrayList<>();
     }
 
     // Create a new ad
