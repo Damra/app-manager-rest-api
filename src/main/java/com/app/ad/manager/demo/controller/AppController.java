@@ -2,16 +2,14 @@ package com.app.ad.manager.demo.controller;
 
 import com.app.ad.manager.demo.model.Ad;
 import com.app.ad.manager.demo.model.App;
-import com.app.ad.manager.demo.repository.AdReposityory;
+import com.app.ad.manager.demo.repository.AdRepository;
 import com.app.ad.manager.demo.repository.AppRepository;
 import com.app.ad.manager.demo.util.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +21,7 @@ public class AppController {
     AppRepository appRepository;
 
     @Autowired
-    AdReposityory adReposityory;
+    AdRepository adRepository;
 
     @RequestMapping(method = RequestMethod.GET)
     public String index() {
@@ -84,15 +82,15 @@ public class AppController {
 
     @RequestMapping(value = "/apps/{appId}/ads", method = RequestMethod.GET)
     public List<Ad> getAdListByAppId(@PathVariable(value = "appId") Long appId) {
-        return adReposityory.findAdsByAppId(appId).orElseThrow(() -> new ResourceNotFoundException("Ad", "app_id", appId));
+        return adRepository.findAdsByAppId(appId).orElseThrow(() -> new ResourceNotFoundException("Ad", "app_id", appId));
     }
 
     // Get all ad by app package name
     @RequestMapping(value = "/apps/ads", method = RequestMethod.GET)
-    public List<Ad> getAdListByAppId(@QueryParam(value = "packageName") String packageName) {
+    public List<Ad> getAdListByAppId(@RequestParam(value = "packageName") String packageName) {
         List<App> apps = appRepository.findByAppId(packageName).orElseThrow(() -> new ResourceNotFoundException("App", "app_id", packageName));
         if (apps.size() > 0) {
-            return adReposityory.findAdsByAppId(apps.get(0).getId()).orElseThrow(() -> new ResourceNotFoundException("Ad", "app_id", apps.get(0)));
+            return adRepository.findAdsByAppId(apps.get(0).getId()).orElseThrow(() -> new ResourceNotFoundException("Ad", "app_id", apps.get(0)));
         }
         return new ArrayList<>();
     }
@@ -102,13 +100,13 @@ public class AppController {
     public Ad createAd(@PathVariable(value = "appId") Long appId, Ad ad) {
         App app = appRepository.findById(appId).orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
         ad.setApp(app);
-        return adReposityory.save(ad);
+        return adRepository.save(ad);
     }
 
     // Get a Single ad
     @GetMapping("/apps/{appId}/ads/{adId}")
     public Ad getadById(@PathVariable(value = "appId") Long appId, @PathVariable(value = "adId") Long adId) {
-        return adReposityory.findAdByAppIdAndId(appId, adId).orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
+        return adRepository.findAdByAppIdAndId(appId, adId).orElseThrow(() -> new ResourceNotFoundException("App", "id", appId));
     }
 
     //endregion

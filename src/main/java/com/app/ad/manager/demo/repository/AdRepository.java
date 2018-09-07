@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AdReposityory extends JpaRepository<Ad, Long> {
+public interface AdRepository extends JpaRepository<Ad, Long> {
     Optional<List<Ad>> findAdsByAppId(Long appId);
     Optional<Ad> findAdByAppIdAndId(Long appId, Long id);
 }
